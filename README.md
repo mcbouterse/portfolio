@@ -1,4 +1,4 @@
 portfolio
 =========
 
-Portfolio
+Portfolio project of Marco Bouterse | Graphics Programmer
