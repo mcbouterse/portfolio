@@ -17,3 +17,4 @@
 *.opensdf
 *.suo
 *.vcxproj.filters
+*.vcxproj.user
