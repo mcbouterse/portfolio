@@ -177,9 +177,8 @@ void D3D11App::update()
 void D3D11App::render()
 {
 	ID3D11RenderTargetView* renderTargetViews[1] = { m_renderTargetView };
-	ID3D11DepthStencilView* depthStencilView = m_depthStencilView;
 
-	m_d3dDeviceContext->OMSetRenderTargets(1, renderTargetViews, depthStencilView);
+	m_d3dDeviceContext->OMSetRenderTargets(1, renderTargetViews, m_depthStencilView);
 
 	// Clear color & depth buffers
 	clear();
