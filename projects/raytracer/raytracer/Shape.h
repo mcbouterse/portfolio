@@ -3,6 +3,7 @@
 
 
 #include "ColorRGBA.h"
+#include "Ray.h"
 
 
 class Shape
@@ -13,6 +14,8 @@ public:
 	:
 	color(p_color)
 	{ }
+
+	virtual float getFirstIntersection(const Ray& p_ray) = 0;
 
 	ColorRGBA color;
 };

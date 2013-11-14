@@ -1,6 +1,8 @@
 #ifndef MB_INC_VECTOR3_H
 #define MB_INC_VECTOR3_H
 
+#include <cmath>
+
 
 class Vector3
 {
@@ -19,6 +21,14 @@ public:
 		y -= p_rhs.y;
 		z -= p_rhs.z;
 		return *this;
+	}
+
+	inline void normalize()
+	{
+		const float length = sqrt(x*x+y*y+z*z);
+		x /= length;
+		y /= length;
+		z /= length;
 	}
 
 	float x;
