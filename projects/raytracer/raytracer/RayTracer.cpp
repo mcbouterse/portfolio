@@ -12,7 +12,7 @@ void RayTracer::renderScene(const SceneList& p_scene)
 	}
 
 	int pixelIndex(0);
-	Ray primaryRay(Point3(0, 0, -600), Vector3(0, 0, 1));
+	Ray primaryRay(m_settings.eyePosition, Vector3(0, 0, 1));
 
 	const float halfWidth  = m_settings.resolutionWidth  / 2.0f;
 	const float halfHeight = m_settings.resolutionHeight / 2.0f;

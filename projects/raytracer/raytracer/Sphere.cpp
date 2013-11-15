@@ -1,7 +1,7 @@
 #include "Sphere.h"
 
 #include <cmath>
-#include "math.h"
+#include "math_helpers.h"
 
 
 float Sphere::getFirstIntersection(const Ray& p_ray)

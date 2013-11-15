@@ -26,6 +26,8 @@ public:
 
 	float getFirstIntersection(const Ray& p_ray);
 
+	inline void setPosition(const Point3& p_position) { m_center = p_position; }
+
 private:
 	Point3 m_center;
 	float  m_radius;

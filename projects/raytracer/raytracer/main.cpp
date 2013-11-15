@@ -36,6 +36,7 @@ int main()
 	settings.resolutionHeight = 480;
 	settings.depth = 255;
 	settings.clearColor = ColorRGB(50,50,50);
+	settings.eyePosition = Point3(0, 0, 600);
 	
 	RayTracer rayTracer(settings);
 	rayTracer.renderScene(scene);

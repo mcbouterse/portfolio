@@ -4,7 +4,9 @@
 #include <vector>
 #include <string>
 #include "ColorRGB.h"
+#include "Point3.h"
 #include "Shape.h"
+#include "types.h"
 
 
 struct RayTraceSettings
@@ -13,6 +15,7 @@ struct RayTraceSettings
 	int      resolutionHeight;
 	float    depth;
 	ColorRGB clearColor;
+	Point3   eyePosition;
 };
 
 typedef std::vector<Shape*> SceneList;
@@ -30,6 +33,8 @@ public:
 	void renderScene(const SceneList& p_scene);
 	
 	bool saveToFile(const std::string& p_filename);
+
+	u8* getPixelData() { return reinterpret_cast<u8*>(&m_imageBuffer[0]); }
 	
 	
 private:

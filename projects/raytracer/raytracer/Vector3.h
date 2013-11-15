@@ -7,7 +7,13 @@
 class Vector3
 {
 public:
-	Vector3();
+	Vector3()
+	:
+	x(0.0f),
+	y(0.0f),
+	z(0.0f)
+	{ }
+
 	Vector3(float p_x, float p_y, float p_z)
 	:
 	x(p_x),

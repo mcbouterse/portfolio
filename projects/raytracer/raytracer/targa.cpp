@@ -31,7 +31,7 @@ bool writeTGAFile(const std::string& p_filename, int p_width, int p_height, unsi
 	
 	// Write out TGA file headers.
 	fwrite(tgaHeader, sizeof(tgaHeader), 1, file);
-	fwrite(header, sizeof(header), 1, file);
+	fwrite(header,    sizeof(header)   , 1, file);
 	
 	// Color swap from RGB to BGR => make local copy
 	const int imageSize = p_width * p_height * channelCount;
