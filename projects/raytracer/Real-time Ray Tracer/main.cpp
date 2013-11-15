@@ -6,7 +6,7 @@
 #include <Plane.h>
 
 
-Sphere* spheres[3];
+Sphere* spheres[3] = {};
 
 
 void buildScene(SceneList& p_scene)
@@ -33,6 +33,22 @@ void updateScene()
 	spheres[0]->setPosition(Point3(sin(t0) * radius, 0, cos(t0) * radius));
 	spheres[1]->setPosition(Point3(sin(t1) * radius, 0, cos(t1) * radius));
 	spheres[2]->setPosition(Point3(sin(t2) * radius, 0, cos(t2) * radius));
+}
+
+
+void showFrameStats(const std::vector<Uint64>& p_timings)
+{
+	Uint64 totalTicks(0);
+	
+	for (auto it = p_timings.begin(); it != p_timings.end(); ++it)
+	{
+		totalTicks += *it;
+	}
+	
+	float secondsPassed = static_cast<float>(totalTicks) / SDL_GetPerformanceFrequency();
+	float averageTime = secondsPassed / p_timings.size();
+	std::cout << "Total render time " << secondsPassed << " seconds." << std::endl;
+	std::cout << "Average frame render time " << averageTime * 1000.0f << " ms, " << 1.0f / averageTime << " fps." << std::endl;
 }
 
 
@@ -76,6 +92,9 @@ int main(int argc, char **argv)
 		settings.resolutionWidth,
 		settings.resolutionHeight);
 
+	std::vector<Uint64> frameTimes;
+	frameTimes.reserve(36000);
+
 	// Main application loop
 	bool keepRunning(true);
 	while (keepRunning)
@@ -88,37 +107,36 @@ int main(int argc, char **argv)
 
 		// Animate scene objects
 		updateScene();
-
+		
 		Uint64 startRender = SDL_GetPerformanceCounter();
 		rayTracer.renderScene(scene);
-		Uint64 stopRender = SDL_GetPerformanceCounter();
-
-		float secondsPassed = static_cast<float>(stopRender - startRender) / SDL_GetPerformanceFrequency();
-		std::cout << "Render took " << secondsPassed << " seconds." << std::endl;
-
+		frameTimes.push_back(SDL_GetPerformanceCounter() - startRender);
+		
 		// Update the texture with raytraced result
 		u8* sourceData = rayTracer.getPixelData();
 		int sourcePitch = settings.resolutionWidth * 3;
 		u8* textureData(nullptr);
 		int pitch(0);
 		SDL_LockTexture(backbuffer, nullptr, reinterpret_cast<void**>(&textureData), &pitch);
-
+		
 		for (int row = 0; row < settings.resolutionHeight; row++)
 		{
 			u8* sourceRow = &sourceData[(settings.resolutionHeight - row - 1) * sourcePitch];
 			memcpy(textureData, sourceRow, sourcePitch);
 			textureData += pitch;
 		}
-
+		
 		SDL_UnlockTexture(backbuffer);
-
+		
 		// TODO: Show result on screen!
 		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, backbuffer, nullptr, nullptr);
-
+		
 		SDL_RenderPresent(renderer);
 	}
-
+	
+	showFrameStats(frameTimes);
+	
 	SDL_DestroyTexture(backbuffer);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
