@@ -6,7 +6,7 @@
 #include <Plane.h>
 
 
-Sphere* spheres[3] = {};
+Sphere* spheres[4] = {};
 
 
 void buildScene(SceneList& p_scene)
@@ -14,10 +14,12 @@ void buildScene(SceneList& p_scene)
 	spheres[0] = new Sphere(Point3(-320, 0, 50), 200.0f, ColorRGBA(255, 0, 0, 255));
 	spheres[1] = new Sphere(Point3(320, 0, 50), 200.0f, ColorRGBA(0, 0, 255, 255));
 	spheres[2] = new Sphere(Point3(0, 0, -50), 200.0f, ColorRGBA(0, 255, 0, 255));
+	//spheres[3] = new Sphere(Point3(0, 500, 0), 10.0f, ColorRGBA(255, 255, 255, 255));
 
 	p_scene.push_back(spheres[0]);
 	p_scene.push_back(spheres[1]);
 	p_scene.push_back(spheres[2]);
+	//p_scene.push_back(spheres[3]);
 	p_scene.push_back(new Plane(Vector3(0, 1, 0), Vector3(0, -150, 0), ColorRGBA(255, 255, 255, 255)));
 }
 

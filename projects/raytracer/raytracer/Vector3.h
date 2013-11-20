@@ -29,6 +29,14 @@ public:
 		return *this;
 	}
 
+	inline Vector3& operator+=(const Vector3& p_rhs)
+	{
+		x += p_rhs.x;
+		y += p_rhs.y;
+		z += p_rhs.z;
+		return *this;
+	}
+
 	inline void normalize()
 	{
 		const float length = sqrt(x*x+y*y+z*z);
@@ -58,6 +66,11 @@ inline Vector3 operator+(const Vector3& p_lhs, const Vector3& p_rhs)
 inline Vector3 operator-(const Vector3& p_lhs, const Vector3& p_rhs)
 {
 	return Vector3(p_lhs.x - p_rhs.x, p_lhs.y - p_rhs.y, p_lhs.z - p_rhs.z);
+}
+
+inline Vector3 operator*(float p_lhs, const Vector3& p_rhs)
+{
+	return Vector3(p_lhs * p_rhs.x, p_lhs * p_rhs.y, p_lhs * p_rhs.z);
 }
 
 

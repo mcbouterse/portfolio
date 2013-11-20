@@ -16,6 +16,7 @@ public:
 	{ }
 
 	virtual float getFirstIntersection(const Ray& p_ray) = 0;
+	virtual Vector3 getNormal(const Point3&) = 0;
 
 	ColorRGBA color;
 };

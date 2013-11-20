@@ -28,3 +28,8 @@ float Plane::getFirstIntersection(const Ray& p_ray)
 	return intersection;
 }
 
+
+Vector3 Plane::getNormal(const Point3&)
+{
+	return m_normal;
+}

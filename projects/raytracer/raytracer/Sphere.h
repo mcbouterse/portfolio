@@ -25,6 +25,7 @@ public:
 	{ }
 
 	float getFirstIntersection(const Ray& p_ray);
+	Vector3 getNormal(const Point3& p_point);
 
 	inline void setPosition(const Point3& p_position) { m_center = p_position; }
 

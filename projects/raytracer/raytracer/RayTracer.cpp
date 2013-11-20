@@ -1,5 +1,6 @@
 #include "RayTracer.h"
 
+#include <algorithm>
 #include "targa.h"
 #include "Ray.h"
 
@@ -42,15 +43,15 @@ bool RayTracer::saveToFile(const std::string& p_filename)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // Private
 
-ColorRGB RayTracer::trace(const Ray& p_ray, const SceneList& p_scene)
+std::pair<Shape*, float> getClosestShape(const Ray& p_ray, const SceneList& p_scene)
 {
 	float closestDistance = std::numeric_limits<float>::max();
 	Shape* closestShape(nullptr);
-
+	
 	for (auto it = p_scene.begin(); it != p_scene.end(); ++it)
 	{
 		if (*it == nullptr) continue;
-
+		
 		float intersectionDistance = (*it)->getFirstIntersection(p_ray);
 		
 		if (intersectionDistance > 0.0f && intersectionDistance < closestDistance)
@@ -59,10 +60,39 @@ ColorRGB RayTracer::trace(const Ray& p_ray, const SceneList& p_scene)
 			closestShape = *it;
 		}
 	}
+	return std::make_pair(closestShape, closestDistance);
+}
 
-	if (closestShape != nullptr)
+ColorRGB RayTracer::trace(const Ray& p_ray, const SceneList& p_scene)
+{
+	std::pair<Shape*, float> closestInfo = getClosestShape(p_ray, p_scene);
+
+	if (closestInfo.first != nullptr)
 	{
-		return closestShape->color.rgb();
+		// Compute shadow ray 
+		const Point3 lightPosition(0, 500, 0);
+		Point3 intersectionPoint = p_ray.origin + closestInfo.second * p_ray.direction;
+		Vector3 intersectionNormal = closestInfo.first->getNormal(intersectionPoint);
+		intersectionNormal.normalize();
+		intersectionPoint += 0.00001f * intersectionNormal;
+		Vector3 shadowVector = lightPosition - intersectionPoint;
+		shadowVector.normalize();
+		Ray shadowRay(intersectionPoint, shadowVector);
+		
+		std::pair<Shape*, float> shadowInfo = getClosestShape(shadowRay, p_scene);
+		
+		float lightContribution = 0.2f; // Ambient light
+		
+		if (shadowInfo.first == nullptr)
+		{
+			// Compute diffuse light factor
+			float diffuseFactor = dotProduct(intersectionNormal, shadowRay.direction);
+			if (diffuseFactor > 0.0f)
+			{
+				lightContribution += diffuseFactor;
+			}
+		}
+		return std::min(lightContribution, 1.0f) * closestInfo.first->color.rgb();
 	}
 	return m_settings.clearColor;
 }

@@ -29,3 +29,9 @@ float Sphere::getFirstIntersection(const Ray& p_ray)
 	return intersectA - sqrt(intersectB);
 }
 
+
+Vector3 Sphere::getNormal(const Point3& p_point)
+{
+	return p_point - m_center;
+}
+
