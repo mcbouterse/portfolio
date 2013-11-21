@@ -1,4 +1,5 @@
 #include <iostream>
+#include <numeric>
 #include <SDL.h>
 
 #include <RayTracer.h>
@@ -11,16 +12,21 @@ Sphere* spheres[4] = {};
 
 void buildScene(SceneList& p_scene)
 {
-	spheres[0] = new Sphere(Point3(-320, 0, 50), 200.0f, ColorRGBA(255, 0, 0, 255));
-	spheres[1] = new Sphere(Point3(320, 0, 50), 200.0f, ColorRGBA(0, 0, 255, 255));
-	spheres[2] = new Sphere(Point3(0, 0, -50), 200.0f, ColorRGBA(0, 255, 0, 255));
+	spheres[0] = new Sphere(Point3(-320, 0, 50), 200.0f, ColorRGBA(255, 0, 255, 255));
+	spheres[1] = new Sphere(Point3(320, 0, 50), 200.0f, ColorRGBA(0, 255, 255, 255));
+	spheres[2] = new Sphere(Point3(0, 0, -50), 200.0f, ColorRGBA(255, 255, 0, 255));
 	//spheres[3] = new Sphere(Point3(0, 500, 0), 10.0f, ColorRGBA(255, 255, 255, 255));
 
 	p_scene.push_back(spheres[0]);
 	p_scene.push_back(spheres[1]);
 	p_scene.push_back(spheres[2]);
 	//p_scene.push_back(spheres[3]);
-	p_scene.push_back(new Plane(Vector3(0, 1, 0), Vector3(0, -150, 0), ColorRGBA(255, 255, 255, 255)));
+
+	//p_scene.push_back(new Plane(Vector3(0, 1, 0), Vector3(0, 750, 0), ColorRGBA(255, 0, 0, 255)));
+	//p_scene.back()->reflective = false;
+
+	p_scene.push_back(new Plane(Vector3(0, 1, 0), Vector3(0, -250, 0), ColorRGBA(255, 255, 255, 255)));
+	//p_scene.back()->reflective = true;
 }
 
 
@@ -41,11 +47,7 @@ void updateScene()
 void showFrameStats(const std::vector<Uint64>& p_timings)
 {
 	Uint64 totalTicks(0);
-	
-	for (auto it = p_timings.begin(); it != p_timings.end(); ++it)
-	{
-		totalTicks += *it;
-	}
+	totalTicks = std::accumulate(p_timings.begin(), p_timings.end(), totalTicks);
 	
 	float secondsPassed = static_cast<float>(totalTicks) / SDL_GetPerformanceFrequency();
 	float averageTime = secondsPassed / p_timings.size();
@@ -81,8 +83,9 @@ int main(int argc, char **argv)
 	settings.resolutionWidth  = 400;
 	settings.resolutionHeight = 300;
 	settings.depth = 255;
-	settings.clearColor = ColorRGB(50, 50, 50);
+	settings.clearColor = ColorRGB(0, 0, 50);
 	settings.eyePosition = Point3(0, 0, -1024);
+	settings.lightEnabled = false;
 
 	RayTracer rayTracer(settings);
 
@@ -99,14 +102,31 @@ int main(int argc, char **argv)
 
 	// Main application loop
 	bool keepRunning(true);
+	bool lightingEnabled(false);
+	
 	while (keepRunning)
 	{
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
 		{
-			if (event.type == SDL_QUIT)	keepRunning = false;
+			if (event.type == SDL_QUIT) keepRunning = false;
+			if (event.type == SDL_KEYDOWN)
+			{
+				SDL_Keysym key = event.key.keysym;
+				switch (key.sym)
+				{
+				case SDLK_0:
+					lightingEnabled = !lightingEnabled;
+					rayTracer.setLightingEnabled(lightingEnabled);
+					break;
+				case SDLK_9:
+					scene.back()->reflective = !scene.back()->reflective;
+				default:
+					break;
+				}
+			}
 		}
-
+		
 		// Animate scene objects
 		updateScene();
 		

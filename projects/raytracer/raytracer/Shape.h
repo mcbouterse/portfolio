@@ -10,15 +10,17 @@ class Shape
 {
 public:
 	Shape() { }
-	Shape(const ColorRGBA& p_color)
+	Shape(const ColorRGBA& p_color, bool p_reflective = false)
 	:
-	color(p_color)
+	color(p_color),
+	reflective(p_reflective)
 	{ }
 
 	virtual float getFirstIntersection(const Ray& p_ray) = 0;
 	virtual Vector3 getNormal(const Point3&) = 0;
 
 	ColorRGBA color;
+	bool      reflective;
 };
 
 

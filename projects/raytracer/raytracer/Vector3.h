@@ -51,12 +51,6 @@ public:
 };
 
 
-inline float dotProduct(const Vector3& p_lhs, const Vector3& p_rhs)
-{
-	return p_lhs.x * p_rhs.x + p_lhs.y * p_rhs.y + p_lhs.z * p_rhs.z;
-}
-
-
 inline Vector3 operator+(const Vector3& p_lhs, const Vector3& p_rhs)
 {
 	return Vector3(p_lhs.x + p_rhs.x, p_lhs.y + p_rhs.y, p_lhs.z + p_rhs.z);
@@ -72,6 +66,19 @@ inline Vector3 operator*(float p_lhs, const Vector3& p_rhs)
 {
 	return Vector3(p_lhs * p_rhs.x, p_lhs * p_rhs.y, p_lhs * p_rhs.z);
 }
+
+
+inline float dotProduct(const Vector3& p_lhs, const Vector3& p_rhs)
+{
+	return p_lhs.x * p_rhs.x + p_lhs.y * p_rhs.y + p_lhs.z * p_rhs.z;
+}
+
+
+inline Vector3 reflect(const Vector3& p_incident, const Vector3& p_normal)
+{
+	return p_incident - (2 * dotProduct(p_incident, p_normal) * p_normal);
+}
+
 
 
 #endif // MB_INC_VECTOR3_H

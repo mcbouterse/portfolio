@@ -26,7 +26,7 @@ void RayTracer::renderScene(const SceneList& p_scene)
 			primaryRay.direction = Vector3(x - halfWidth, y - halfHeight, m_settings.depth);
 			primaryRay.direction.normalize();
 				
-			m_imageBuffer[pixelIndex] = trace(primaryRay, p_scene);
+			m_imageBuffer[pixelIndex] = trace(primaryRay, p_scene, 0);
 			++pixelIndex;
 		}
 
@@ -63,18 +63,43 @@ std::pair<Shape*, float> getClosestShape(const Ray& p_ray, const SceneList& p_sc
 	return std::make_pair(closestShape, closestDistance);
 }
 
-ColorRGB RayTracer::trace(const Ray& p_ray, const SceneList& p_scene)
+ColorRGB RayTracer::trace(const Ray& p_ray, const SceneList& p_scene, int p_bounce)
 {
+	if (p_bounce > m_settings.maxBounces)
+	{
+		return m_settings.clearColor;
+	}
+	
 	std::pair<Shape*, float> closestInfo = getClosestShape(p_ray, p_scene);
 
 	if (closestInfo.first != nullptr)
 	{
-		// Compute shadow ray 
-		const Point3 lightPosition(0, 500, 0);
 		Point3 intersectionPoint = p_ray.origin + closestInfo.second * p_ray.direction;
 		Vector3 intersectionNormal = closestInfo.first->getNormal(intersectionPoint);
 		intersectionNormal.normalize();
-		intersectionPoint += 0.00001f * intersectionNormal;
+		
+		// Offset to prevent self intersection
+		intersectionPoint += 0.0001f * intersectionNormal;
+		
+		//ColorRGB reflectedColor = ColorRGB(255, 255, 255);
+		
+		if (closestInfo.first->reflective)
+		{
+			// Trace reflection ray
+			Ray reflectionRay(
+				intersectionPoint,
+				reflect(p_ray.direction, intersectionNormal));
+			
+			return trace(reflectionRay, p_scene, p_bounce + 1);
+		}
+		if (m_settings.lightEnabled == false)
+		{
+			return closestInfo.first->color.rgb();
+		}
+		
+		// Compute shadow ray 
+		const Point3 lightPosition(0, 500, 0);
+		
 		Vector3 shadowVector = lightPosition - intersectionPoint;
 		shadowVector.normalize();
 		Ray shadowRay(intersectionPoint, shadowVector);
